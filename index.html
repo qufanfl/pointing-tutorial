@@ -7,8 +7,19 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <main class="tutorial-screen" aria-label="TV remote pointing tutorial">
-      <section class="space-stage">
+    <main class="tutorial-shell" aria-label="TV remote pointing tutorial">
+      <header class="tutorial-topbar">
+        <div class="mission-progress" aria-label="튜토리얼 진행률">
+          <span class="progress-dot is-active"></span>
+          <span class="progress-dot"></span>
+          <span class="progress-dot"></span>
+          <span class="progress-dot"></span>
+        </div>
+        <button class="skip-button" type="button">건너뛰기</button>
+      </header>
+
+      <div class="tutorial-screen">
+        <section class="space-stage">
         <div class="star-field" aria-hidden="true">
           <span class="star star-1"></span>
           <span class="star star-2"></span>
@@ -27,24 +38,25 @@
           <h1>별빛을 깨워보세요</h1>
           <p>터치패드를 누르고 리모컨을 움직여 첫 번째 별을 찾아요.</p>
         </div>
-      </section>
+        </section>
 
-      <aside class="remote-guide" aria-label="Remote guide">
-        <div class="remote-body">
-          <div class="power-dot"></div>
-          <div class="touchpad-ring">
-            <div class="touchpad-core"></div>
+        <aside class="remote-guide" aria-label="Remote guide">
+          <div class="remote-body">
+            <div class="power-dot"></div>
+            <div class="touchpad-ring">
+              <div class="touchpad-core"></div>
+            </div>
+            <div class="remote-button-dot remote-button-dot-1"></div>
+            <div class="remote-button-dot remote-button-dot-2"></div>
+            <div class="remote-button-dot remote-button-dot-3"></div>
+            <div class="remote-button-wide"></div>
+            <div class="remote-button-pill remote-button-pill-1"></div>
+            <div class="remote-button-pill remote-button-pill-2"></div>
+            <div class="remote-button-pill remote-button-pill-3"></div>
+            <div class="remote-button-pill remote-button-pill-4"></div>
           </div>
-          <div class="remote-button-dot remote-button-dot-1"></div>
-          <div class="remote-button-dot remote-button-dot-2"></div>
-          <div class="remote-button-dot remote-button-dot-3"></div>
-          <div class="remote-button-wide"></div>
-          <div class="remote-button-pill remote-button-pill-1"></div>
-          <div class="remote-button-pill remote-button-pill-2"></div>
-          <div class="remote-button-pill remote-button-pill-3"></div>
-          <div class="remote-button-pill remote-button-pill-4"></div>
-        </div>
-      </aside>
+        </aside>
+      </div>
     </main>
   </body>
 </html>

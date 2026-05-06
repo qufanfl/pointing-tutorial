@@ -13,7 +13,7 @@ Each step is scoped to roughly 30 minutes to 1 hour.
   - Show a simple star field, one target star, and basic title text.
   - Add a visible remote guide area or placeholder so the product shape is represented from the start.
 
-- [ ] Add the basic tutorial layout
+- [x] Add the basic tutorial layout
   - Define the main TV canvas/screen area.
   - Add a compact instruction area.
   - Add a skip button and a simple mission progress indicator.
