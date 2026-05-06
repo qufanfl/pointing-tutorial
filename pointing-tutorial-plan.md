@@ -36,7 +36,7 @@ Each step is scoped to roughly 30 minutes to 1 hour.
   - Add light particles that gently trail the pointer.
   - Tune pointer speed so first-time users can control it easily.
 
-- [ ] Create Mission 1: Wake The Starlight
+- [x] Create Mission 1: Wake The Starlight
   - Place one dim target star on screen.
   - Ask the user to hold the touchpad and move the pointer to the star.
   - Brighten the star and space around it on success.

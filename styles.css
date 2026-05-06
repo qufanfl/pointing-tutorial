@@ -100,6 +100,20 @@ body {
   opacity: 0.45;
 }
 
+.space-stage::after {
+  position: absolute;
+  inset: 0;
+  content: "";
+  background: radial-gradient(circle at 56% 42%, rgba(138, 226, 255, 0.18), transparent 26%);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 700ms ease;
+}
+
+.space-stage.mission-one-complete::after {
+  opacity: 1;
+}
+
 .star {
   position: absolute;
   width: 5px;
@@ -149,6 +163,9 @@ body {
   border-radius: 999px;
   background: radial-gradient(circle, rgba(165, 235, 255, 0.24), transparent 64%);
   animation: glow 2.8s ease-in-out infinite;
+  transition:
+    filter 520ms ease,
+    transform 520ms ease;
 }
 
 .target-star span {
@@ -164,6 +181,18 @@ body {
     0 0 18px #d9fbff,
     0 0 44px rgba(112, 214, 255, 0.86),
     0 0 92px rgba(168, 130, 255, 0.42);
+}
+
+.target-star.is-awake {
+  filter: brightness(1.5) saturate(1.12);
+  animation: successBloom 1.2s ease-out 1, glow 2.8s ease-in-out 1.2s infinite;
+}
+
+.target-star.is-awake span {
+  box-shadow:
+    0 0 22px #ffffff,
+    0 0 70px rgba(135, 231, 255, 0.96),
+    0 0 140px rgba(184, 154, 255, 0.54);
 }
 
 .star-pointer {
@@ -267,6 +296,10 @@ h1 {
   color: rgba(236, 248, 255, 0.76);
   font-size: 22px;
   line-height: 1.42;
+}
+
+.mission-one-complete .mission-instruction {
+  color: rgba(220, 250, 255, 0.92);
 }
 
 .remote-guide {
@@ -506,6 +539,20 @@ h1 {
   50% {
     transform: translate(-50%, -50%) scale(1.04);
     opacity: 1;
+  }
+}
+
+@keyframes successBloom {
+  0% {
+    transform: translate(-50%, -50%) scale(0.92);
+  }
+
+  42% {
+    transform: translate(-50%, -50%) scale(1.28);
+  }
+
+  100% {
+    transform: translate(-50%, -50%) scale(1);
   }
 }
 
