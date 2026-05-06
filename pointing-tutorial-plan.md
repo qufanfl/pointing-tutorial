@@ -42,18 +42,18 @@ Each step is scoped to roughly 30 minutes to 1 hour.
   - Brighten the star and space around it on success.
   - Advance automatically after a short success moment.
 
-- [ ] Create Mission 2: Trace The Constellation
+- [x] Create Mission 2: Trace The Constellation
   - Place three stars in a simple constellation path.
   - Let the user reach each star in sequence.
   - Draw a thin glowing line between completed stars.
   - Add a small pulse when the constellation is completed.
 
-- [ ] Add gentle physics reactions
+- [x] Add gentle physics reactions
   - Make target stars react when the pointer gets close.
   - Add a soft pull, glow, or shimmer near active targets.
   - Keep the effect subtle so it does not distract from learning.
 
-- [ ] Create Mission 3: Scroll The Star Map
+- [x] Create Mission 3: Scroll The Star Map
   - Build a scrollable star map or nebula layer.
   - Support Flick as a short scroll.
   - Support Swipe as continuous scroll.

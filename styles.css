@@ -49,6 +49,10 @@ body {
   border-radius: 999px;
   background: rgba(219, 242, 255, 0.26);
   box-shadow: 0 0 0 1px rgba(219, 242, 255, 0.08);
+  transition:
+    width 260ms ease,
+    background 260ms ease,
+    box-shadow 260ms ease;
 }
 
 .progress-dot.is-active {
@@ -114,6 +118,10 @@ body {
   opacity: 1;
 }
 
+.space-stage.mission-two-active::after {
+  opacity: 0.48;
+}
+
 .star {
   position: absolute;
   width: 5px;
@@ -159,13 +167,16 @@ body {
   left: 56%;
   width: 120px;
   height: 120px;
-  transform: translate(-50%, -50%);
+  transform: translate(calc(-50% + var(--react-x, 0px)), calc(-50% + var(--react-y, 0px)));
   border-radius: 999px;
   background: radial-gradient(circle, rgba(165, 235, 255, 0.24), transparent 64%);
   animation: glow 2.8s ease-in-out infinite;
   transition:
     filter 520ms ease,
     transform 520ms ease;
+  filter:
+    brightness(calc(1 + var(--react-force, 0) * 0.42))
+    saturate(calc(1 + var(--react-force, 0) * 0.18));
 }
 
 .target-star span {
@@ -193,6 +204,262 @@ body {
     0 0 22px #ffffff,
     0 0 70px rgba(135, 231, 255, 0.96),
     0 0 140px rgba(184, 154, 255, 0.54);
+}
+
+.mission-two-active .target-star {
+  opacity: 0.24;
+  transition: opacity 500ms ease;
+}
+
+.constellation {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 640ms ease;
+}
+
+.mission-two-active .constellation {
+  opacity: 1;
+}
+
+.constellation-lines {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.constellation-line {
+  stroke: rgba(159, 231, 255, 0.84);
+  stroke-width: 0.22;
+  stroke-linecap: round;
+  stroke-dasharray: 100;
+  stroke-dashoffset: 100;
+  filter: drop-shadow(0 0 8px rgba(113, 218, 255, 0.74));
+  transition: stroke-dashoffset 720ms ease;
+}
+
+.constellation-line-1-active .constellation-line-1,
+.constellation-line-2-active .constellation-line-2 {
+  stroke-dashoffset: 0;
+}
+
+.constellation-star {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  transform:
+    translate(calc(-50% + var(--react-x, 0px)), calc(-50% + var(--react-y, 0px)))
+    scale(calc(0.82 + var(--react-force, 0) * 0.18));
+  border-radius: 999px;
+  background: rgba(233, 250, 255, 0.88);
+  box-shadow:
+    0 0 18px rgba(181, 234, 255, 0.7),
+    0 0 48px rgba(123, 210, 255, 0.28);
+  opacity: 0.58;
+  transition:
+    opacity 320ms ease,
+    transform 320ms ease,
+    box-shadow 320ms ease;
+  filter:
+    brightness(calc(1 + var(--react-force, 0) * 0.36))
+    saturate(calc(1 + var(--react-force, 0) * 0.2));
+}
+
+.constellation-star-1 {
+  left: 28%;
+  top: 68%;
+}
+
+.constellation-star-2 {
+  left: 48%;
+  top: 42%;
+}
+
+.constellation-star-3 {
+  left: 72%;
+  top: 58%;
+}
+
+.constellation-star.is-next {
+  opacity: 1;
+  transform:
+    translate(calc(-50% + var(--react-x, 0px)), calc(-50% + var(--react-y, 0px)))
+    scale(calc(1.16 + var(--react-force, 0) * 0.12));
+  box-shadow:
+    0 0 24px rgba(238, 253, 255, 0.95),
+    0 0 72px rgba(119, 218, 255, 0.72);
+  animation: nextStarPulse 1.5s ease-in-out infinite;
+}
+
+.constellation-star.is-found {
+  opacity: 1;
+  transform:
+    translate(calc(-50% + var(--react-x, 0px)), calc(-50% + var(--react-y, 0px)))
+    scale(calc(1 + var(--react-force, 0) * 0.08));
+  background: #ffffff;
+  box-shadow:
+    0 0 24px rgba(255, 255, 255, 0.96),
+    0 0 82px rgba(135, 225, 255, 0.78);
+}
+
+.mission-two-complete .constellation {
+  animation: constellationComplete 1.2s ease-out 1;
+}
+
+.mission-three-active .target-star,
+.mission-three-active .constellation {
+  opacity: 0;
+  transition: opacity 520ms ease;
+}
+
+.star-map {
+  position: absolute;
+  inset: 10% 6%;
+  z-index: 1;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+  mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+  transition: opacity 620ms ease;
+}
+
+.mission-three-active .star-map {
+  opacity: 1;
+}
+
+.star-map-track {
+  display: flex;
+  width: 300%;
+  height: 100%;
+  transform: translate3d(var(--map-scroll, 0px), 0, 0);
+  transition: transform 90ms linear;
+}
+
+.map-panel {
+  position: relative;
+  flex: 0 0 33.333%;
+  height: 100%;
+}
+
+.map-panel::before {
+  position: absolute;
+  inset: 14% 8%;
+  content: "";
+  border: 1px solid rgba(168, 226, 255, 0.1);
+  border-radius: 999px;
+  background:
+    radial-gradient(circle at 36% 48%, rgba(113, 216, 255, 0.14), transparent 18%),
+    radial-gradient(circle at 62% 38%, rgba(185, 149, 255, 0.1), transparent 24%);
+  filter: blur(1px);
+}
+
+.map-star {
+  position: absolute;
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: rgba(245, 253, 255, 0.96);
+  box-shadow: 0 0 22px rgba(159, 229, 255, 0.78);
+}
+
+.map-star-a {
+  top: 30%;
+  left: 28%;
+}
+
+.map-star-b {
+  right: 24%;
+  bottom: 26%;
+}
+
+.map-star-c {
+  top: 22%;
+  left: 34%;
+}
+
+.map-star-d {
+  right: 34%;
+  top: 48%;
+}
+
+.map-star-e {
+  left: 48%;
+  bottom: 20%;
+}
+
+.nebula-orbit {
+  position: absolute;
+  top: 32%;
+  left: 50%;
+  width: 220px;
+  height: 120px;
+  transform: translate(-50%, -50%) rotate(-18deg);
+  border: 1px solid rgba(143, 221, 255, 0.18);
+  border-radius: 50%;
+  box-shadow: 0 0 46px rgba(98, 189, 255, 0.14);
+}
+
+.hidden-constellation {
+  position: absolute;
+  top: 48%;
+  left: 52%;
+  width: 190px;
+  height: 110px;
+  transform: translate(-50%, -50%);
+}
+
+.hidden-constellation::before,
+.hidden-constellation::after {
+  position: absolute;
+  content: "";
+  height: 1px;
+  transform-origin: left center;
+  background: rgba(153, 229, 255, 0.72);
+  box-shadow: 0 0 16px rgba(125, 218, 255, 0.72);
+}
+
+.hidden-constellation::before {
+  top: 68px;
+  left: 28px;
+  width: 78px;
+  transform: rotate(-34deg);
+}
+
+.hidden-constellation::after {
+  top: 24px;
+  left: 92px;
+  width: 74px;
+  transform: rotate(28deg);
+}
+
+.hidden-constellation span {
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  background: #ffffff;
+  box-shadow:
+    0 0 24px rgba(255, 255, 255, 0.95),
+    0 0 72px rgba(124, 220, 255, 0.68);
+}
+
+.hidden-constellation span:nth-child(1) {
+  left: 22px;
+  top: 62px;
+}
+
+.hidden-constellation span:nth-child(2) {
+  left: 92px;
+  top: 18px;
+}
+
+.hidden-constellation span:nth-child(3) {
+  right: 18px;
+  top: 56px;
 }
 
 .star-pointer {
@@ -553,6 +820,31 @@ h1 {
 
   100% {
     transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+@keyframes nextStarPulse {
+  0%,
+  100% {
+    filter: brightness(1);
+  }
+
+  50% {
+    filter: brightness(1.35);
+  }
+}
+
+@keyframes constellationComplete {
+  0% {
+    filter: brightness(1);
+  }
+
+  45% {
+    filter: brightness(1.7);
+  }
+
+  100% {
+    filter: brightness(1);
   }
 }
 
