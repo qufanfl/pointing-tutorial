@@ -80,6 +80,7 @@ body {
   position: relative;
   min-height: calc(100vh - 160px);
   overflow: hidden;
+  cursor: default;
   border: 1px solid rgba(190, 226, 255, 0.16);
   border-radius: 28px;
   background:
@@ -167,8 +168,8 @@ body {
 
 .star-pointer {
   position: absolute;
-  top: 52%;
-  left: 46%;
+  top: var(--pointer-y, 52%);
+  left: var(--pointer-x, 46%);
   z-index: 1;
   width: 28px;
   height: 28px;
@@ -181,9 +182,8 @@ body {
     0 0 110px rgba(169, 137, 255, 0.24);
   opacity: 0;
   pointer-events: none;
-  transition:
-    opacity 420ms ease,
-    transform 420ms ease;
+  transition: opacity 420ms ease, transform 420ms ease;
+  will-change: top, left, opacity, transform;
 }
 
 .star-pointer::before,
@@ -205,7 +205,7 @@ body {
   transform: translate(-50%, -50%) scale(1);
 }
 
-.star-pointer.is-holding {
+.star-pointer.is-pointing {
   animation: pointerBreath 1.6s ease-in-out infinite;
 }
 
@@ -290,7 +290,7 @@ h1 {
     inset 0 0 18px rgba(255, 255, 255, 0.08);
 }
 
-.remote-body.is-holding .touchpad-ring {
+.remote-body.is-pointing .touchpad-ring {
   border-color: rgba(226, 252, 255, 0.94);
   box-shadow:
     0 0 30px rgba(127, 224, 255, 0.78),
@@ -378,6 +378,8 @@ h1 {
   box-shadow:
     0 0 22px rgba(109, 213, 255, 0.4),
     inset 0 0 18px rgba(255, 255, 255, 0.06);
+  cursor: pointer;
+  touch-action: none;
 }
 
 .touchpad-ring::before {

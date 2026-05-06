@@ -30,7 +30,7 @@ Each step is scoped to roughly 30 minutes to 1 hour.
   - Fade the pointer out 3 seconds after release.
   - Add subtle stardust around the pointer.
 
-- [ ] Implement pointer movement
+- [x] Implement pointer movement
   - Map remote angle movement or prototype input movement to pointer movement.
   - Make movement feel smooth and responsive.
   - Add light particles that gently trail the pointer.
