@@ -19,7 +19,7 @@ Each step is scoped to roughly 30 minutes to 1 hour.
   - Add a skip button and a simple mission progress indicator.
   - Keep the first screen clean and premium rather than explanatory.
 
-- [ ] Build the remote touchpad guide
+- [x] Build the remote touchpad guide
   - Draw or place a remote silhouette based on the reference image.
   - Highlight the small circular touchpad area near the top.
   - Add a soft pulse effect when the tutorial asks the user to touch and hold.
