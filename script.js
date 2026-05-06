@@ -342,8 +342,8 @@ function updateStarMapScroll() {
   const activeHoldDirection = scrollHoldDirection || keyboardScrollDirection;
 
   if ((isTouchpadPressed || keyboardScrollDirection) && activeHoldDirection) {
-    const holdSpeed = 5.6;
-    scrollVelocity += (activeHoldDirection * holdSpeed - scrollVelocity) * 0.08;
+    const holdSpeed = 7.92;
+    scrollVelocity += (activeHoldDirection * holdSpeed - scrollVelocity) * 0.1;
   }
 
   if (Math.abs(scrollVelocity) > 0.05) {
