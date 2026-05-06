@@ -6,6 +6,7 @@ const targetStar = document.querySelector(".target-star");
 const constellationStars = [...document.querySelectorAll(".constellation-star")];
 const starMap = document.querySelector(".star-map");
 const starMapTrack = document.querySelector(".star-map-track");
+const hiddenConstellation = document.querySelector(".hidden-constellation");
 const centerStar = document.querySelector(".center-star");
 const missionInstruction = document.querySelector(".mission-instruction");
 const missionLabel = document.querySelector(".step-label");
@@ -30,6 +31,8 @@ let missionTwoActive = false;
 let missionTwoComplete = false;
 let missionThreeActive = false;
 let missionThreeComplete = false;
+let pressSelectActive = false;
+let pressSelectComplete = false;
 let centerRepositionActive = false;
 let centerRepositionComplete = false;
 let tutorialComplete = false;
@@ -40,6 +43,7 @@ let isTouchpadPressed = false;
 let lastTouchpadX = 0;
 let lastTouchpadMoveAt = 0;
 let scrollHoldDirection = 0;
+let keyboardScrollDirection = 0;
 let lastTapAt = 0;
 
 function clamp(value, min, max) {
@@ -335,9 +339,11 @@ function updateStarMapScroll() {
   const centerDistance = Math.abs(hiddenConstellationCenter - scrollPosition - viewportCenter);
   const centerForce = clamp(1 - centerDistance / (starMap.clientWidth * 0.24), 0, 1);
 
-  if (isTouchpadPressed && scrollHoldDirection) {
+  const activeHoldDirection = scrollHoldDirection || keyboardScrollDirection;
+
+  if ((isTouchpadPressed || keyboardScrollDirection) && activeHoldDirection) {
     const holdSpeed = 5.6;
-    scrollVelocity += (scrollHoldDirection * holdSpeed - scrollVelocity) * 0.08;
+    scrollVelocity += (activeHoldDirection * holdSpeed - scrollVelocity) * 0.08;
   }
 
   if (Math.abs(scrollVelocity) > 0.05) {
@@ -350,7 +356,7 @@ function updateStarMapScroll() {
     scrollVelocity += (maxScroll - scrollPosition) * 0.045;
   }
 
-  scrollVelocity *= isTouchpadPressed ? 0.985 : 0.94;
+  scrollVelocity *= isTouchpadPressed || keyboardScrollDirection ? 0.985 : 0.94;
   scrollPosition = clamp(scrollPosition, -boundarySlack, maxScroll + boundarySlack);
 
   if (!isTouchpadPressed && scrollPosition < 0 && Math.abs(scrollVelocity) < 0.7) {
@@ -373,8 +379,30 @@ function updateStarMapScroll() {
     stage.classList.add("mission-three-complete");
     window.clearTimeout(hintTimer);
     missionInstruction.textContent = "숨겨진 별자리를 찾았어요.";
-    scheduleTransition(startCenterReposition);
+    scheduleTransition(startPressSelect);
   }
+}
+
+function startPressSelect() {
+  if (pressSelectActive) {
+    return;
+  }
+
+  pressSelectActive = true;
+  stage.classList.add("press-select-active");
+  setMission(3, "Mission 4", "별자리를 선택해보세요", "터치패드를 눌러 선택해요.", "터치패드를 한 번 눌러보세요.");
+}
+
+function completePressSelect() {
+  if (!pressSelectActive || pressSelectComplete) {
+    return;
+  }
+
+  pressSelectComplete = true;
+  stage.classList.add("press-select-complete");
+  window.clearTimeout(hintTimer);
+  missionInstruction.textContent = "좋아요. 선택했어요.";
+  scheduleTransition(startCenterReposition);
 }
 
 function startCenterReposition() {
@@ -385,7 +413,7 @@ function startCenterReposition() {
   const rect = stage.getBoundingClientRect();
   centerRepositionActive = true;
   stage.classList.add("center-reposition-active");
-  setMission(3, "Mission 4", "중심별로 돌아오세요", "터치패드를 두 번 톡톡 두드려요.", "빠르게 두 번 탭해보세요.");
+  setMission(4, "Mission 5", "중심별로 돌아오세요", "터치패드를 두 번 톡톡 두드려요.", "빠르게 두 번 탭해보세요.");
   targetPosition = {
     x: rect.width * 0.82,
     y: rect.height * 0.28,
@@ -435,6 +463,13 @@ touchpad.addEventListener("pointerenter", activatePointer);
 
 touchpad.addEventListener("pointerdown", (event) => {
   const now = performance.now();
+
+  if (pressSelectActive && !pressSelectComplete) {
+    event.preventDefault();
+    noteUserAction();
+    completePressSelect();
+    return;
+  }
 
   if (centerRepositionActive && now - lastTapAt < 320) {
     event.preventDefault();
@@ -486,6 +521,42 @@ function releaseTouchpadScroll() {
 touchpad.addEventListener("pointerup", releaseTouchpadScroll);
 touchpad.addEventListener("pointercancel", releaseTouchpadScroll);
 
+function handleKeyboardScroll(event) {
+  const scrollKeys = {
+    ArrowLeft: -1,
+    ArrowRight: 1,
+  };
+
+  const direction = scrollKeys[event.code];
+
+  if (!missionThreeActive || missionThreeComplete || !direction) {
+    return false;
+  }
+
+  event.preventDefault();
+
+  if (keyboardScrollDirection !== direction) {
+    scrollVelocity += direction * 18;
+  }
+
+  keyboardScrollDirection = direction;
+  noteUserAction();
+  resetIdleTimer();
+  return true;
+}
+
+function releaseKeyboardScroll(event) {
+  if (
+    missionThreeActive &&
+    !missionThreeComplete &&
+    ((event.code === "ArrowLeft" && keyboardScrollDirection === -1) ||
+      (event.code === "ArrowRight" && keyboardScrollDirection === 1))
+  ) {
+    keyboardScrollDirection = 0;
+    scrollVelocity *= 1.12;
+  }
+}
+
 document.addEventListener("pointermove", (event) => {
   if (!isPointing) {
     return;
@@ -505,7 +576,11 @@ document.addEventListener("pointermove", (event) => {
   resetIdleTimer();
 });
 
-touchpad.addEventListener("keydown", (event) => {
+document.addEventListener("keydown", (event) => {
+  if (handleKeyboardScroll(event)) {
+    return;
+  }
+
   const keyMove = {
     ArrowUp: [0, -18],
     ArrowDown: [0, 18],
@@ -528,6 +603,18 @@ touchpad.addEventListener("keydown", (event) => {
 
   event.preventDefault();
   activatePointer();
+});
+
+document.addEventListener("keyup", releaseKeyboardScroll);
+
+hiddenConstellation.addEventListener("click", (event) => {
+  if (!pressSelectActive || pressSelectComplete) {
+    return;
+  }
+
+  event.preventDefault();
+  noteUserAction();
+  completePressSelect();
 });
 
 window.addEventListener("resize", setInitialPointerPosition);

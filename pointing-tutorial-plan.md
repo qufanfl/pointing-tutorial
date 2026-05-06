@@ -64,6 +64,13 @@ Each step is scoped to roughly 30 minutes to 1 hour.
   - Add gentle deceleration.
   - Add a soft boundary or elastic feel at map edges.
   - Make the hidden constellation react when it reaches the center area.
+  - Map left/right arrow keys to short and continuous star map scrolling.
+
+- [x] Add press selection tutorial
+  - Keep the found constellation visible after Mission 3.
+  - Support a single touchpad press to select the found constellation.
+  - Add a short selection burst feedback.
+  - Continue to center reposition after selection succeeds.
 
 - [x] Add center reposition tutorial
   - Move or leave the pointer away from center.

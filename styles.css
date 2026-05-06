@@ -486,6 +486,34 @@ body {
     transform 420ms ease;
 }
 
+.press-select-active .star-map {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.press-select-active .hidden-constellation {
+  animation: hiddenConstellationFound 1.4s ease-out infinite;
+  cursor: pointer;
+}
+
+.selection-burst {
+  position: absolute;
+  top: 48%;
+  left: 52%;
+  z-index: 2;
+  width: 170px;
+  height: 170px;
+  transform: translate(-50%, -50%) scale(0.5);
+  border: 1px solid rgba(176, 240, 255, 0.5);
+  border-radius: 999px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.press-select-complete .selection-burst {
+  animation: selectionBurst 860ms ease-out 1;
+}
+
 .center-reposition-active .hidden-constellation {
   transform: translate(-50%, -50%) scale(0.84);
   filter: brightness(0.7) saturate(0.7);
@@ -1111,6 +1139,22 @@ h1 {
 
   50% {
     box-shadow: 0 0 48px rgba(138, 224, 255, 0.22);
+  }
+}
+
+@keyframes selectionBurst {
+  0% {
+    transform: translate(-50%, -50%) scale(0.42);
+    opacity: 0;
+  }
+
+  35% {
+    opacity: 1;
+  }
+
+  100% {
+    transform: translate(-50%, -50%) scale(1.35);
+    opacity: 0;
   }
 }
 
