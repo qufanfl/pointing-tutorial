@@ -65,19 +65,19 @@ Each step is scoped to roughly 30 minutes to 1 hour.
   - Add a soft boundary or elastic feel at map edges.
   - Make the hidden constellation react when it reaches the center area.
 
-- [ ] Add center reposition tutorial
+- [x] Add center reposition tutorial
   - Move or leave the pointer away from center.
   - Show a subtle center star target.
   - Support Double Tap to reposition the pointer to center.
   - Add a short light trail and ripple on completion.
 
-- [ ] Build tutorial state flow
+- [x] Build tutorial state flow
   - Connect Mission 1, Mission 2, Mission 3, and center reposition into one flow.
   - Add simple success transitions between missions.
   - Make sure users can recover if they miss an action.
   - Keep total flow around 30 to 60 seconds.
 
-- [ ] Add final completion state
+- [x] Add final completion state
   - Show a concise completion message.
   - Offer a clear next action to continue to the TV experience.
   - Keep the tone premium and light.

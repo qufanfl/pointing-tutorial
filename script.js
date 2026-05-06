@@ -21,6 +21,10 @@ let pointerPosition = { x: 0, y: 0 };
 let targetPosition = { x: 0, y: 0 };
 let animationFrame;
 let mapAnimationFrame;
+let transitionTimer;
+let hintTimer;
+let activeInstruction = "";
+let activeHint = "";
 let missionOneComplete = false;
 let missionTwoActive = false;
 let missionTwoComplete = false;
@@ -28,6 +32,7 @@ let missionThreeActive = false;
 let missionThreeComplete = false;
 let centerRepositionActive = false;
 let centerRepositionComplete = false;
+let tutorialComplete = false;
 let constellationStep = 0;
 let scrollPosition = 0;
 let scrollVelocity = 0;
@@ -54,6 +59,43 @@ function setInitialPointerPosition() {
 function renderPointer() {
   pointer.style.setProperty("--pointer-x", `${pointerPosition.x}px`);
   pointer.style.setProperty("--pointer-y", `${pointerPosition.y}px`);
+}
+
+function setMission(index, label, title, instruction, hint = "") {
+  progressDots.forEach((dot, dotIndex) => {
+    dot.classList.toggle("is-active", dotIndex === index);
+  });
+  missionLabel.textContent = label;
+  missionTitle.textContent = title;
+  activeInstruction = instruction;
+  activeHint = hint;
+  missionInstruction.textContent = instruction;
+  scheduleHint();
+}
+
+function scheduleHint() {
+  window.clearTimeout(hintTimer);
+
+  if (!activeHint) {
+    return;
+  }
+
+  hintTimer = window.setTimeout(() => {
+    missionInstruction.textContent = activeHint;
+  }, 7000);
+}
+
+function noteUserAction() {
+  if (activeInstruction && missionInstruction.textContent === activeHint) {
+    missionInstruction.textContent = activeInstruction;
+  }
+
+  scheduleHint();
+}
+
+function scheduleTransition(nextStep, delay = 1200) {
+  window.clearTimeout(transitionTimer);
+  transitionTimer = window.setTimeout(nextStep, delay);
 }
 
 function animatePointer() {
@@ -126,6 +168,7 @@ function activatePointer(event) {
     animatePointer();
   }
 
+  noteUserAction();
   resetIdleTimer();
 }
 
@@ -204,9 +247,10 @@ function checkMissionOne() {
   missionOneComplete = true;
   stage.classList.add("mission-one-complete");
   targetStar.classList.add("is-awake");
+  window.clearTimeout(hintTimer);
   missionInstruction.textContent = "좋아요. 별빛이 깨어났어요.";
 
-  window.setTimeout(startMissionTwo, 1200);
+  scheduleTransition(startMissionTwo);
 }
 
 function startMissionTwo() {
@@ -216,11 +260,7 @@ function startMissionTwo() {
 
   missionTwoActive = true;
   stage.classList.add("mission-two-active");
-  missionLabel.textContent = "Mission 2";
-  missionTitle.textContent = "별자리를 이어보세요";
-  missionInstruction.textContent = "빛나는 별을 순서대로 따라가요.";
-  progressDots[0].classList.remove("is-active");
-  progressDots[1].classList.add("is-active");
+  setMission(1, "Mission 2", "별자리를 이어보세요", "빛나는 별을 순서대로 따라가요.", "다음으로 빛나는 별에 포인터를 가까이 가져가보세요.");
   constellationStars[0].classList.add("is-next");
 }
 
@@ -239,6 +279,7 @@ function checkMissionTwo() {
 
   nextStar.classList.remove("is-next");
   nextStar.classList.add("is-found");
+  noteUserAction();
   constellationStep += 1;
 
   if (constellationStep > 1) {
@@ -248,8 +289,9 @@ function checkMissionTwo() {
   if (constellationStep >= constellationStars.length) {
     missionTwoComplete = true;
     stage.classList.add("mission-two-complete");
+    window.clearTimeout(hintTimer);
     missionInstruction.textContent = "별자리를 찾았어요.";
-    window.setTimeout(startMissionThree, 1200);
+    scheduleTransition(startMissionThree);
     return;
   }
 
@@ -263,11 +305,13 @@ function startMissionThree() {
 
   missionThreeActive = true;
   stage.classList.add("mission-three-active");
-  missionLabel.textContent = "Mission 3";
-  missionTitle.textContent = "별자리를 찾아 보세요.";
-  missionInstruction.textContent = "터치패드를 누른 채 좌우로 밀어 별지도를 넘겨요.";
-  progressDots[1].classList.remove("is-active");
-  progressDots[2].classList.add("is-active");
+  setMission(
+    2,
+    "Mission 3",
+    "숨어있는 별자리를 찾아보세요.",
+    "터치패드를 누른 채 좌우로 밀어 별지도를 넘겨요.",
+    "짧게 밀면 조금, 길게 잡으면 별지도가 계속 흘러요.",
+  );
 
   if (!mapAnimationFrame) {
     animateStarMap();
@@ -327,8 +371,9 @@ function updateStarMapScroll() {
   if (!missionThreeComplete && centerForce > 0.82) {
     missionThreeComplete = true;
     stage.classList.add("mission-three-complete");
+    window.clearTimeout(hintTimer);
     missionInstruction.textContent = "숨겨진 별자리를 찾았어요.";
-    window.setTimeout(startCenterReposition, 1200);
+    scheduleTransition(startCenterReposition);
   }
 }
 
@@ -340,11 +385,7 @@ function startCenterReposition() {
   const rect = stage.getBoundingClientRect();
   centerRepositionActive = true;
   stage.classList.add("center-reposition-active");
-  missionLabel.textContent = "Mission 4";
-  missionTitle.textContent = "중심별로 돌아오세요";
-  missionInstruction.textContent = "터치패드를 두 번 톡 눌러 중심으로 돌아와요.";
-  progressDots[2].classList.remove("is-active");
-  progressDots[3].classList.add("is-active");
+  setMission(3, "Mission 4", "중심별로 돌아오세요", "터치패드를 두 번 톡 눌러 중심으로 돌아와요.", "터치패드를 빠르게 두 번 탭해보세요.");
   targetPosition = {
     x: rect.width * 0.82,
     y: rect.height * 0.28,
@@ -364,12 +405,30 @@ function completeCenterReposition() {
   };
   stage.classList.add("center-reposition-complete");
   pointer.classList.add("is-repositioning");
+  window.clearTimeout(hintTimer);
   missionInstruction.textContent = "완료. 중심으로 돌아왔어요.";
   resetIdleTimer();
 
   window.setTimeout(() => {
     pointer.classList.remove("is-repositioning");
   }, 900);
+
+  scheduleTransition(showCompletionState, 1100);
+}
+
+function showCompletionState() {
+  if (tutorialComplete) {
+    return;
+  }
+
+  tutorialComplete = true;
+  window.clearTimeout(hintTimer);
+  stage.classList.add("tutorial-complete");
+  progressDots.forEach((dot) => {
+    dot.classList.add("is-complete");
+    dot.classList.remove("is-active");
+  });
+  missionInstruction.textContent = "튜토리얼을 완료했어요.";
 }
 
 touchpad.addEventListener("pointerenter", activatePointer);
@@ -380,6 +439,7 @@ touchpad.addEventListener("pointerdown", (event) => {
   if (centerRepositionActive && now - lastTapAt < 320) {
     event.preventDefault();
     lastTapAt = 0;
+    noteUserAction();
     completeCenterReposition();
     return;
   }
@@ -396,6 +456,7 @@ touchpad.addEventListener("pointerdown", (event) => {
   lastTouchpadX = event.clientX;
   lastTouchpadMoveAt = performance.now();
   scrollHoldDirection = Math.sign(scrollVelocity) || scrollHoldDirection || 1;
+  noteUserAction();
   resetIdleTimer();
 });
 
@@ -412,6 +473,7 @@ touchpad.addEventListener("pointermove", (event) => {
   scrollVelocity = scrollVelocity * 0.22 + (-deltaX / elapsed) * 18;
   scrollHoldDirection = Math.sign(-deltaX) || scrollHoldDirection;
   scrollPosition += -deltaX * 1.35;
+  noteUserAction();
   resetIdleTimer();
 });
 
@@ -439,6 +501,7 @@ document.addEventListener("pointermove", (event) => {
   const deltaY = event.clientY - lastInput.y;
   lastInput = { x: event.clientX, y: event.clientY };
   movePointerBy(deltaX, deltaY);
+  noteUserAction();
   resetIdleTimer();
 });
 
@@ -454,6 +517,7 @@ touchpad.addEventListener("keydown", (event) => {
     event.preventDefault();
     targetPosition.x = clamp(targetPosition.x + keyMove[event.code][0], 24, stage.clientWidth - 24);
     targetPosition.y = clamp(targetPosition.y + keyMove[event.code][1], 24, stage.clientHeight - 24);
+    noteUserAction();
     resetIdleTimer();
     return;
   }
@@ -469,3 +533,4 @@ touchpad.addEventListener("keydown", (event) => {
 window.addEventListener("resize", setInitialPointerPosition);
 
 setInitialPointerPosition();
+setMission(0, "Mission 1", "별빛을 깨워보세요", "터치패드에 마우스를 올리고 포인터를 첫 번째 별까지 움직여요.", "리모컨의 파란 원형 터치패드 위에 마우스를 올려보세요.");
