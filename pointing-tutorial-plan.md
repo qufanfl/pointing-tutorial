@@ -24,7 +24,7 @@ Each step is scoped to roughly 30 minutes to 1 hour.
   - Highlight the small circular touchpad area near the top.
   - Add a soft pulse effect when the tutorial asks the user to touch and hold.
 
-- [ ] Implement pointer activation
+- [x] Implement pointer activation
   - Show the star pointer when Tap & Hold begins.
   - Keep the pointer visible while the hold state is active.
   - Fade the pointer out 3 seconds after release.

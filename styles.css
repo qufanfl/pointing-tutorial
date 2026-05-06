@@ -165,6 +165,81 @@ body {
     0 0 92px rgba(168, 130, 255, 0.42);
 }
 
+.star-pointer {
+  position: absolute;
+  top: 52%;
+  left: 46%;
+  z-index: 1;
+  width: 28px;
+  height: 28px;
+  transform: translate(-50%, -50%) scale(0.76);
+  border-radius: 999px;
+  background: radial-gradient(circle, #faffff 0 18%, rgba(143, 224, 255, 0.82) 19% 34%, transparent 68%);
+  box-shadow:
+    0 0 22px rgba(219, 249, 255, 0.92),
+    0 0 58px rgba(105, 213, 255, 0.54),
+    0 0 110px rgba(169, 137, 255, 0.24);
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    opacity 420ms ease,
+    transform 420ms ease;
+}
+
+.star-pointer::before,
+.star-pointer::after {
+  position: absolute;
+  inset: -18px;
+  content: "";
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(147, 224, 255, 0.22), transparent 62%);
+}
+
+.star-pointer::after {
+  inset: -34px;
+  opacity: 0.36;
+}
+
+.star-pointer.is-visible {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.star-pointer.is-holding {
+  animation: pointerBreath 1.6s ease-in-out infinite;
+}
+
+.star-pointer.is-fading {
+  transform: translate(-50%, -50%) scale(0.82);
+}
+
+.pointer-dust {
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  border-radius: 999px;
+  background: rgba(238, 252, 255, 0.88);
+  box-shadow: 0 0 16px rgba(153, 222, 255, 0.72);
+}
+
+.pointer-dust-1 {
+  top: -4px;
+  left: -16px;
+  animation: dustFloat 2.2s ease-in-out infinite;
+}
+
+.pointer-dust-2 {
+  right: -14px;
+  bottom: 0;
+  animation: dustFloat 2.6s ease-in-out 180ms infinite;
+}
+
+.pointer-dust-3 {
+  right: 5px;
+  bottom: -18px;
+  animation: dustFloat 2.4s ease-in-out 360ms infinite;
+}
+
 .intro-copy {
   position: absolute;
   left: 56px;
@@ -213,6 +288,14 @@ h1 {
   box-shadow:
     0 24px 80px rgba(0, 0, 0, 0.48),
     inset 0 0 18px rgba(255, 255, 255, 0.08);
+}
+
+.remote-body.is-holding .touchpad-ring {
+  border-color: rgba(226, 252, 255, 0.94);
+  box-shadow:
+    0 0 30px rgba(127, 224, 255, 0.78),
+    0 0 64px rgba(126, 126, 255, 0.2),
+    inset 0 0 20px rgba(255, 255, 255, 0.12);
 }
 
 .remote-body::before {
@@ -434,6 +517,30 @@ h1 {
   50% {
     transform: scale(1.06);
     opacity: 0.82;
+  }
+}
+
+@keyframes pointerBreath {
+  0%,
+  100% {
+    filter: brightness(1);
+  }
+
+  50% {
+    filter: brightness(1.26);
+  }
+}
+
+@keyframes dustFloat {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+    opacity: 0.42;
+  }
+
+  50% {
+    transform: translate3d(6px, -8px, 0);
+    opacity: 1;
   }
 }
 
