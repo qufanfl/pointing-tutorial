@@ -24,11 +24,14 @@ let missionOneComplete = false;
 let missionTwoActive = false;
 let missionTwoComplete = false;
 let missionThreeActive = false;
+let missionThreeComplete = false;
 let constellationStep = 0;
 let scrollPosition = 0;
 let scrollVelocity = 0;
 let isTouchpadPressed = false;
 let lastTouchpadX = 0;
+let lastTouchpadMoveAt = 0;
+let scrollHoldDirection = 0;
 
 function clamp(value, min, max) {
   return Math.min(Math.max(value, min), max);
@@ -51,7 +54,6 @@ function renderPointer() {
 
 function animatePointer() {
   applyEdgeAssist();
-  updateStarMapScroll();
   pointerPosition.x += (targetPosition.x - pointerPosition.x) * 0.18;
   pointerPosition.y += (targetPosition.y - pointerPosition.y) * 0.18;
   renderPointer();
@@ -70,7 +72,7 @@ function movePointerBy(deltaX, deltaY) {
 }
 
 function applyEdgeAssist() {
-  if (!isPointing) {
+  if (!isPointing || isTouchpadPressed) {
     return;
   }
 
@@ -279,13 +281,50 @@ function updateStarMapScroll() {
   }
 
   const maxScroll = starMap.clientWidth * 2;
+  const boundarySlack = starMap.clientWidth * 0.12;
+  const hiddenConstellationCenter = starMap.clientWidth * 2.52;
+  const viewportCenter = starMap.clientWidth / 2;
+  const centerDistance = Math.abs(hiddenConstellationCenter - scrollPosition - viewportCenter);
+  const centerForce = clamp(1 - centerDistance / (starMap.clientWidth * 0.24), 0, 1);
 
-  if (isTouchpadPressed && Math.abs(scrollVelocity) > 0.2) {
-    scrollPosition += scrollVelocity * 0.72;
+  if (isTouchpadPressed && scrollHoldDirection) {
+    const holdSpeed = 5.6;
+    scrollVelocity += (scrollHoldDirection * holdSpeed - scrollVelocity) * 0.08;
   }
 
-  scrollPosition = clamp(scrollPosition, 0, maxScroll);
+  if (Math.abs(scrollVelocity) > 0.05) {
+    scrollPosition += scrollVelocity;
+  }
+
+  if (scrollPosition < 0) {
+    scrollVelocity += (0 - scrollPosition) * 0.045;
+  } else if (scrollPosition > maxScroll) {
+    scrollVelocity += (maxScroll - scrollPosition) * 0.045;
+  }
+
+  scrollVelocity *= isTouchpadPressed ? 0.985 : 0.94;
+  scrollPosition = clamp(scrollPosition, -boundarySlack, maxScroll + boundarySlack);
+
+  if (!isTouchpadPressed && scrollPosition < 0 && Math.abs(scrollVelocity) < 0.7) {
+    scrollPosition += (0 - scrollPosition) * 0.14;
+  }
+
+  if (!isTouchpadPressed && scrollPosition > maxScroll && Math.abs(scrollVelocity) < 0.7) {
+    scrollPosition += (maxScroll - scrollPosition) * 0.14;
+  }
+
+  if (Math.abs(scrollVelocity) < 0.05) {
+    scrollVelocity = 0;
+  }
+
   starMapTrack.style.setProperty("--map-scroll", `${-scrollPosition}px`);
+  starMap.style.setProperty("--hidden-force", centerForce.toFixed(3));
+
+  if (!missionThreeComplete && centerForce > 0.82) {
+    missionThreeComplete = true;
+    stage.classList.add("mission-three-complete");
+    missionInstruction.textContent = "숨겨진 별자리를 찾았어요.";
+  }
 }
 
 touchpad.addEventListener("pointerenter", activatePointer);
@@ -299,7 +338,8 @@ touchpad.addEventListener("pointerdown", (event) => {
   touchpad.setPointerCapture(event.pointerId);
   isTouchpadPressed = true;
   lastTouchpadX = event.clientX;
-  scrollVelocity = 0;
+  lastTouchpadMoveAt = performance.now();
+  scrollHoldDirection = Math.sign(scrollVelocity) || scrollHoldDirection || 1;
   resetIdleTimer();
 });
 
@@ -309,14 +349,20 @@ touchpad.addEventListener("pointermove", (event) => {
   }
 
   const deltaX = event.clientX - lastTouchpadX;
+  const now = performance.now();
+  const elapsed = Math.max(now - lastTouchpadMoveAt, 16);
   lastTouchpadX = event.clientX;
-  scrollVelocity = -deltaX * 2.2;
-  scrollPosition += scrollVelocity;
+  lastTouchpadMoveAt = now;
+  scrollVelocity = scrollVelocity * 0.22 + (-deltaX / elapsed) * 18;
+  scrollHoldDirection = Math.sign(-deltaX) || scrollHoldDirection;
+  scrollPosition += -deltaX * 1.35;
   resetIdleTimer();
 });
 
 function releaseTouchpadScroll() {
   isTouchpadPressed = false;
+  scrollHoldDirection = 0;
+  scrollVelocity *= 1.18;
 }
 
 touchpad.addEventListener("pointerup", releaseTouchpadScroll);
@@ -324,6 +370,12 @@ touchpad.addEventListener("pointercancel", releaseTouchpadScroll);
 
 document.addEventListener("pointermove", (event) => {
   if (!isPointing) {
+    return;
+  }
+
+  if (missionThreeActive && isTouchpadPressed) {
+    lastInput = { x: event.clientX, y: event.clientY };
+    resetIdleTimer();
     return;
   }
 

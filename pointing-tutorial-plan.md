@@ -59,7 +59,7 @@ Each step is scoped to roughly 30 minutes to 1 hour.
   - Support Swipe as continuous scroll.
   - Support Swipe & Hold as ongoing auto-scroll.
 
-- [ ] Tune scroll motion
+- [x] Tune scroll motion
   - Add light inertia after Flick and Swipe.
   - Add gentle deceleration.
   - Add a soft boundary or elastic feel at map edges.

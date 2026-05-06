@@ -336,7 +336,7 @@ body {
   width: 300%;
   height: 100%;
   transform: translate3d(var(--map-scroll, 0px), 0, 0);
-  transition: transform 90ms linear;
+  will-change: transform;
 }
 
 .map-panel {
@@ -409,7 +409,13 @@ body {
   left: 52%;
   width: 190px;
   height: 110px;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%) scale(calc(1 + var(--hidden-force, 0) * 0.08));
+  filter:
+    brightness(calc(1 + var(--hidden-force, 0) * 0.55))
+    saturate(calc(1 + var(--hidden-force, 0) * 0.24));
+  transition:
+    filter 220ms ease,
+    transform 220ms ease;
 }
 
 .hidden-constellation::before,
@@ -445,6 +451,10 @@ body {
   box-shadow:
     0 0 24px rgba(255, 255, 255, 0.95),
     0 0 72px rgba(124, 220, 255, 0.68);
+}
+
+.mission-three-complete .hidden-constellation {
+  animation: hiddenConstellationFound 1.4s ease-out infinite;
 }
 
 .hidden-constellation span:nth-child(1) {
@@ -845,6 +855,17 @@ h1 {
 
   100% {
     filter: brightness(1);
+  }
+}
+
+@keyframes hiddenConstellationFound {
+  0%,
+  100% {
+    filter: brightness(1.25) saturate(1.1);
+  }
+
+  50% {
+    filter: brightness(1.85) saturate(1.25);
   }
 }
 
