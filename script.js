@@ -260,7 +260,7 @@ function startMissionTwo() {
 
   missionTwoActive = true;
   stage.classList.add("mission-two-active");
-  setMission(1, "Mission 2", "별자리를 이어보세요", "빛나는 별을 순서대로 따라가요.", "다음으로 빛나는 별에 포인터를 가까이 가져가보세요.");
+  setMission(1, "Mission 2", "별자리를 이어보세요", "빛나는 별을 차례로 따라가요.", "다음 별에 포인터를 가까이 가져가세요.");
   constellationStars[0].classList.add("is-next");
 }
 
@@ -308,8 +308,8 @@ function startMissionThree() {
   setMission(
     2,
     "Mission 3",
-    "숨어있는 별자리를 찾아보세요.",
-    "터치패드를 누른 채 좌우로 밀어 별지도를 넘겨요.",
+    "숨겨진 별자리를 찾아요",
+    "터치패드를 밀어 별지도를 넘겨요.",
     "짧게 밀면 조금, 길게 잡으면 별지도가 계속 흘러요.",
   );
 
@@ -385,7 +385,7 @@ function startCenterReposition() {
   const rect = stage.getBoundingClientRect();
   centerRepositionActive = true;
   stage.classList.add("center-reposition-active");
-  setMission(3, "Mission 4", "중심별로 돌아오세요", "터치패드를 두 번 톡 눌러 중심으로 돌아와요.", "터치패드를 빠르게 두 번 탭해보세요.");
+  setMission(3, "Mission 4", "중심별로 돌아오세요", "터치패드를 두 번 톡톡 두드려요.", "빠르게 두 번 탭해보세요.");
   targetPosition = {
     x: rect.width * 0.82,
     y: rect.height * 0.28,
@@ -533,4 +533,4 @@ touchpad.addEventListener("keydown", (event) => {
 window.addEventListener("resize", setInitialPointerPosition);
 
 setInitialPointerPosition();
-setMission(0, "Mission 1", "별빛을 깨워보세요", "터치패드에 마우스를 올리고 포인터를 첫 번째 별까지 움직여요.", "리모컨의 파란 원형 터치패드 위에 마우스를 올려보세요.");
+setMission(0, "Mission 1", "별빛을 깨워보세요", "터치패드에 손을 대고 첫 별을 찾아요.", "파란 원형 터치패드에 마우스를 올려보세요.");

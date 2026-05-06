@@ -88,7 +88,7 @@ Each step is scoped to roughly 30 minutes to 1 hour.
   - Make the space feel deep but readable on a TV screen.
   - Check text contrast and legibility from couch distance.
 
-- [ ] Polish copy
+- [x] Polish copy
   - Keep each instruction short.
   - Use friendly, action-oriented Korean copy.
   - Avoid long explanations of mechanics.
