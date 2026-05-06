@@ -82,7 +82,7 @@ Each step is scoped to roughly 30 minutes to 1 hour.
   - Offer a clear next action to continue to the TV experience.
   - Keep the tone premium and light.
 
-- [ ] Polish visual style
+- [x] Polish visual style
   - Refine colors, glow intensity, stars, and particles.
   - Avoid a busy or childish look.
   - Make the space feel deep but readable on a TV screen.
