@@ -6,6 +6,7 @@ const targetStar = document.querySelector(".target-star");
 const constellationStars = [...document.querySelectorAll(".constellation-star")];
 const starMap = document.querySelector(".star-map");
 const starMapTrack = document.querySelector(".star-map-track");
+const centerStar = document.querySelector(".center-star");
 const missionInstruction = document.querySelector(".mission-instruction");
 const missionLabel = document.querySelector(".step-label");
 const missionTitle = document.querySelector(".intro-copy h1");
@@ -25,6 +26,8 @@ let missionTwoActive = false;
 let missionTwoComplete = false;
 let missionThreeActive = false;
 let missionThreeComplete = false;
+let centerRepositionActive = false;
+let centerRepositionComplete = false;
 let constellationStep = 0;
 let scrollPosition = 0;
 let scrollVelocity = 0;
@@ -32,6 +35,7 @@ let isTouchpadPressed = false;
 let lastTouchpadX = 0;
 let lastTouchpadMoveAt = 0;
 let scrollHoldDirection = 0;
+let lastTapAt = 0;
 
 function clamp(value, min, max) {
   return Math.min(Math.max(value, min), max);
@@ -260,7 +264,7 @@ function startMissionThree() {
   missionThreeActive = true;
   stage.classList.add("mission-three-active");
   missionLabel.textContent = "Mission 3";
-  missionTitle.textContent = "성운을 넘겨보세요";
+  missionTitle.textContent = "별자리를 찾아 보세요.";
   missionInstruction.textContent = "터치패드를 누른 채 좌우로 밀어 별지도를 넘겨요.";
   progressDots[1].classList.remove("is-active");
   progressDots[2].classList.add("is-active");
@@ -324,13 +328,65 @@ function updateStarMapScroll() {
     missionThreeComplete = true;
     stage.classList.add("mission-three-complete");
     missionInstruction.textContent = "숨겨진 별자리를 찾았어요.";
+    window.setTimeout(startCenterReposition, 1200);
   }
+}
+
+function startCenterReposition() {
+  if (centerRepositionActive) {
+    return;
+  }
+
+  const rect = stage.getBoundingClientRect();
+  centerRepositionActive = true;
+  stage.classList.add("center-reposition-active");
+  missionLabel.textContent = "Mission 4";
+  missionTitle.textContent = "중심별로 돌아오세요";
+  missionInstruction.textContent = "터치패드를 두 번 톡 눌러 중심으로 돌아와요.";
+  progressDots[2].classList.remove("is-active");
+  progressDots[3].classList.add("is-active");
+  targetPosition = {
+    x: rect.width * 0.82,
+    y: rect.height * 0.28,
+  };
+}
+
+function completeCenterReposition() {
+  if (!centerRepositionActive || centerRepositionComplete) {
+    return;
+  }
+
+  const rect = stage.getBoundingClientRect();
+  centerRepositionComplete = true;
+  targetPosition = {
+    x: rect.width / 2,
+    y: rect.height / 2,
+  };
+  stage.classList.add("center-reposition-complete");
+  pointer.classList.add("is-repositioning");
+  missionInstruction.textContent = "완료. 중심으로 돌아왔어요.";
+  resetIdleTimer();
+
+  window.setTimeout(() => {
+    pointer.classList.remove("is-repositioning");
+  }, 900);
 }
 
 touchpad.addEventListener("pointerenter", activatePointer);
 
 touchpad.addEventListener("pointerdown", (event) => {
-  if (!missionThreeActive) {
+  const now = performance.now();
+
+  if (centerRepositionActive && now - lastTapAt < 320) {
+    event.preventDefault();
+    lastTapAt = 0;
+    completeCenterReposition();
+    return;
+  }
+
+  lastTapAt = now;
+
+  if (!missionThreeActive || missionThreeComplete) {
     return;
   }
 
